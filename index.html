@@ -414,6 +414,10 @@ input,select,textarea,button{font-family:inherit}
         <div class="report-header-meta">
           <div class="meta-label">REPORT PERIOD</div>
           <div class="meta-val" id="rpt-period">March 2026</div>
+          <div id="rpt-domain-wrap" style="display:none">
+            <div class="meta-label" style="margin-top:8px">DOMAIN</div>
+            <div class="meta-val"><a href="#" style="color:inherit;text-decoration:none" id="rpt-domain-link"></a></div>
+          </div>
           <div class="meta-label" style="margin-top:8px">PREPARED BY</div>
           <div class="meta-val" id="rpt-prepby">IWD Agency</div>
         </div>
@@ -469,6 +473,7 @@ input,select,textarea,button{font-family:inherit}
             <div class="input-group"><label>Prepared By</label><input type="text" class="p-input" id="cfg-prepby" value="IWD Agency" oninput="liveUpdate()"></div>
           </div>
           <div class="edit-field" style="margin-top:8px"><label>Logo Image URL (optional)</label><input type="text" class="p-input" id="cfg-logo-url" placeholder="https://example.com/logo.png" oninput="liveUpdate()"></div>
+          <div class="edit-field" style="margin-top:8px"><label>Domain URL</label><input type="text" class="p-input" id="cfg-domain" placeholder="https://example.com" oninput="liveUpdate()"></div>
         </div>
         <div class="panel-section">
           <div class="panel-label">Report Period</div>
@@ -789,7 +794,7 @@ function resetToDefault(clientId, period) {
 
   config = {
     client: name, initials: name.substring(0,2).toUpperCase(),
-    prepby: 'IWD Agency', logoUrl: '',
+    prepby: 'IWD Agency', logoUrl: '', domain: '',
     month, year, version: '1.0',
     primary: '#2563eb', accent: '#06b6d4',
     score: 90, passed: 12, warnings: 3, issues: 1, total: 16,
@@ -1035,6 +1040,10 @@ function updateHeader() {
   document.getElementById('rpt-subtitle').textContent = `Monthly Quality Assurance & Site Health Report — v${c.version}`;
   document.getElementById('rpt-period').textContent = `${c.month} ${c.year}`;
   document.getElementById('rpt-prepby').textContent = c.prepby;
+  const domainLink=document.getElementById('rpt-domain-link');
+  if(domainLink){domainLink.textContent=c.domain||'';domainLink.href=c.domain||'#'}
+  const domainWrap=document.getElementById('rpt-domain-wrap');
+  if(domainWrap) domainWrap.style.display=c.domain?'':'none';
   document.getElementById('nav-title').textContent  = `${c.client} — QA Report`;
   document.getElementById('nav-logo-icon').textContent = c.initials || c.client.substring(0,2).toUpperCase();
   const logo = document.getElementById('rpt-logo');
@@ -1051,7 +1060,7 @@ function updateHeader() {
   // Sync config panel inputs
   const map={
     'cfg-client':c.client,'cfg-initials':c.initials,'cfg-prepby':c.prepby,
-    'cfg-logo-url':c.logoUrl,'cfg-year':c.year,'cfg-version':c.version,
+    'cfg-logo-url':c.logoUrl,'cfg-domain':c.domain||'','cfg-year':c.year,'cfg-version':c.version,
     'cfg-score':c.score,'cfg-passed':c.passed,'cfg-warnings':c.warnings,
     'cfg-issues':c.issues,'cfg-total':c.total,'cfg-summary':c.summary||''
   };
@@ -1328,6 +1337,7 @@ function liveUpdate(){
   config.initials=g('cfg-initials')||config.initials;
   config.prepby=g('cfg-prepby')||config.prepby;
   config.logoUrl=g('cfg-logo-url')||'';
+  config.domain=g('cfg-domain')||'';
   config.month=g('cfg-month')||config.month;
   config.year=g('cfg-year')||config.year;
   config.version=g('cfg-version')||config.version;
@@ -1377,9 +1387,9 @@ function h2r(hex,a){
 //  PRESETS
 // ═══════════════════════════════════════════════════════
 const PRESETS={
-  schoolfix:{client:'Schoolfix',initials:'SF',prepby:'IWD Agency',primary:'#2563eb',accent:'#06b6d4',score:90,passed:12,warnings:3,issues:1,total:16},
-  acme:{client:'Acme Corp',initials:'AC',prepby:'QA Team',primary:'#16a34a',accent:'#f59e0b',score:85,passed:10,warnings:5,issues:2,total:17},
-  techstart:{client:'TechStart',initials:'TS',prepby:'Dev Agency',primary:'#7c3aed',accent:'#ec4899',score:78,passed:9,warnings:4,issues:3,total:16}
+  schoolfix:{client:'Schoolfix',initials:'SF',prepby:'IWD Agency',domain:'https://schoolfix.com',primary:'#2563eb',accent:'#06b6d4',score:90,passed:12,warnings:3,issues:1,total:16},
+  acme:{client:'Acme Corp',initials:'AC',prepby:'QA Team',domain:'https://acmecorp.com',primary:'#16a34a',accent:'#f59e0b',score:85,passed:10,warnings:5,issues:2,total:17},
+  techstart:{client:'TechStart',initials:'TS',prepby:'Dev Agency',domain:'https://techstart.io',primary:'#7c3aed',accent:'#ec4899',score:78,passed:9,warnings:4,issues:3,total:16}
 };
 
 function loadPreset(key){
@@ -1390,7 +1400,7 @@ function loadPreset(key){
   badge.textContent='Loaded ✓';badge.className='preset-badge found';
   Object.assign(config,p);
   const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v};
-  set('cfg-client',p.client);set('cfg-initials',p.initials);set('cfg-prepby',p.prepby);
+  set('cfg-client',p.client);set('cfg-initials',p.initials);set('cfg-prepby',p.prepby);set('cfg-domain',p.domain||'');
   set('cfg-primary',p.primary);set('cfg-primary-picker',p.primary);
   set('cfg-accent',p.accent);set('cfg-accent-picker',p.accent);
   set('cfg-score',p.score);set('cfg-passed',p.passed);set('cfg-warnings',p.warnings);
