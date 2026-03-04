@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QA Reports</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
+  --border:#30363d;--border2:#21262d;
+  --text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --primary:#2563eb;--accent:#06b6d4;
+  --blue-light:#3b82f6;--blue-dim:rgba(37,99,235,0.15);
+  --green:#3fb950;--green-dim:rgba(63,185,80,0.15);
+  --red:#f85149;--red-dim:rgba(248,81,73,0.15);
+  --orange:#e3b341;--orange-dim:rgba(227,179,65,0.15);
+  --teal:#06b6d4;--teal-dim:rgba(6,182,212,0.15);
+  --panel-w:380px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;min-height:100vh;overflow-x:hidden}
+input,select,textarea,button{font-family:inherit}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ══════════════════════════════════════════
+   PAGES
+══════════════════════════════════════════ */
+.page{display:none;min-height:100vh}
+.page.active{display:block}
+
+/* ══════════════════════════════════════════
+   HOME / PORTAL PAGE
+══════════════════════════════════════════ */
+.portal{
+  max-width:860px;margin:0 auto;padding:60px 24px;
+}
+.portal-hero{text-align:center;margin-bottom:48px}
+.portal-hero .hero-icon{
+  width:64px;height:64px;border-radius:14px;background:var(--primary);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;margin:0 auto 16px;
+}
+.portal-hero h1{font-size:26px;font-weight:700;color:var(--text);margin-bottom:8px}
+.portal-hero p{font-size:13px;color:var(--text2)}
+.portal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:32px}
+.portal-client-card{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:16px;cursor:pointer;transition:border-color 0.15s,transform 0.15s;
+}
+.portal-client-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+.pcc-head{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.pcc-logo{width:40px;height:40px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0}
+.pcc-name{font-size:13px;font-weight:600;color:var(--text)}
+.pcc-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.pcc-reports{display:flex;flex-direction:column;gap:4px}
+.pcc-report-link{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 10px;border-radius:5px;background:var(--bg3);
+  border:1px solid var(--border2);font-size:11px;color:var(--text2);
+  cursor:pointer;transition:all 0.12s;text-decoration:none;
+}
+.pcc-report-link:hover{border-color:var(--primary);color:var(--text);background:var(--blue-dim)}
+.pcc-report-link .rl-month{font-weight:500}
+.pcc-report-link .rl-score{font-family:'IBM Plex Mono',monospace;font-size:10px}
+.portal-admin-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  width:100%;padding:12px;border-radius:8px;
+  background:transparent;border:1px dashed var(--border);
+  color:var(--text3);font-size:12px;cursor:pointer;transition:all 0.15s;
+}
+.portal-admin-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-dim)}
+
+/* ══════════════════════════════════════════
+   ADMIN LOGIN PAGE
+══════════════════════════════════════════ */
+.admin-login-wrap{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--bg);
+}
+.login-card{width:380px;background:var(--bg2);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.login-card-top{background:var(--primary);padding:28px;text-align:center}
+.login-card-top .lct-icon{font-size:30px;margin-bottom:8px}
+.login-card-top h2{font-size:16px;font-weight:700;color:white}
+.login-card-top p{font-size:11px;color:rgba(255,255,255,0.7);margin-top:4px}
+.login-card-body{padding:24px 28px 28px}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:11px;color:var(--text2);margin-bottom:5px;font-weight:500}
+.login-field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;transition:border-color 0.15s}
+.login-field input:focus{border-color:var(--primary)}
+.login-field input::placeholder{color:var(--text3)}
+.login-error{background:var(--red-dim);border:1px solid rgba(248,81,73,0.3);border-radius:5px;padding:8px 12px;font-size:11px;color:var(--red);margin-bottom:12px;display:none}
+.login-error.show{display:block}
+.login-btn{width:100%;padding:10px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--primary);color:white;transition:all 0.15s}
+.login-btn:hover{background:var(--blue-light)}
+.login-hint{font-size:10px;color:var(--text3);text-align:center;margin-top:12px}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);cursor:pointer;margin-bottom:20px;transition:color 0.15s}
+.back-link:hover{color:var(--text)}
+
+/* ══════════════════════════════════════════
+   REPORT NAV
+══════════════════════════════════════════ */
+.topnav{position:fixed;top:0;left:0;right:0;z-index:200;height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:12px}
+.topnav-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;color:var(--text);text-decoration:none;cursor:pointer}
+.topnav-logo .icon{width:30px;height:30px;border-radius:6px;background:var(--primary);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0}
+.topnav-sep{flex:1}
+.qa-badge{display:flex;align-items:center;gap:6px;background:var(--red-dim);border:1px solid rgba(248,81,73,0.3);border-radius:20px;padding:4px 10px 4px 8px;font-size:11px;font-weight:600;color:var(--red)}
+.qa-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--red);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.topnav-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all 0.15s}
+.topnav-btn.ghost{background:transparent;border-color:var(--border);color:var(--text2)}
+.topnav-btn.ghost:hover{border-color:var(--text2);color:var(--text)}
+.topnav-btn.primary{background:var(--primary);color:white}
+.topnav-btn.primary:hover{background:var(--blue-light)}
+.topnav-btn.teal{background:var(--teal-dim);border-color:var(--teal);color:var(--teal)}
+.topnav-btn.teal:hover{background:rgba(6,182,212,0.25)}
+.topnav-btn.danger{background:var(--red-dim);border-color:rgba(248,81,73,0.35);color:var(--red)}
+.topnav-btn.danger:hover{background:rgba(248,81,73,0.2)}
+
+/* ══════════════════════════════════════════
+   REPORT LAYOUT
+══════════════════════════════════════════ */
+.report-page{padding-top:48px;min-height:100vh;display:flex}
+.report-area{flex:1;padding:30px 40px;min-width:0;transition:margin-right 0.25s}
+.report-area.with-panel{margin-right:var(--panel-w)}
+
+/* ══════════════════════════════════════════
+   ADMIN PANEL
+══════════════════════════════════════════ */
+.side-panel{position:fixed;top:48px;right:0;bottom:0;width:var(--panel-w);background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column;z-index:100;transition:transform 0.25s ease}
+.side-panel.hidden{transform:translateX(100%)}
+.panel-header{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--bg2);z-index:5}
+.panel-header h2{font-size:13px;font-weight:600;color:var(--text)}
+.panel-header-sub{font-size:10px;color:var(--text3);margin-top:1px}
+.panel-tabs{display:flex;border-bottom:1px solid var(--border);background:var(--bg2);position:sticky;top:53px;z-index:4}
+.panel-tab{flex:1;padding:8px 4px;text-align:center;font-size:11px;font-weight:500;cursor:pointer;color:var(--text3);border-bottom:2px solid transparent;transition:all 0.15s}
+.panel-tab.active{color:var(--blue-light);border-bottom-color:var(--blue-light)}
+.panel-tab:hover:not(.active){color:var(--text2)}
+.tab-body{padding:14px 16px;flex:1;display:none}
+.tab-body.active{display:block}
+.panel-section{margin-bottom:18px}
+.panel-label{font-size:10px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.p-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;transition:border-color 0.15s;outline:none}
+.p-input:focus{border-color:var(--blue-light)}
+.p-input::placeholder{color:var(--text3)}
+.p-select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238b949e' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.p-select:focus{border-color:var(--blue-light)}
+.input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.input-group{display:flex;flex-direction:column;gap:4px}
+.input-group label,.edit-field label{font-size:11px;color:var(--text2)}
+.edit-field{margin-bottom:12px}
+.edit-field label{display:block;margin-bottom:5px;font-weight:500}
+.edit-field textarea{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:8px 10px;color:var(--text);font-size:12px;resize:vertical;min-height:70px;outline:none;font-family:'IBM Plex Sans',sans-serif;line-height:1.5}
+.edit-field textarea:focus{border-color:var(--blue-light)}
+.edit-field input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:7px 10px;color:var(--text);font-size:12px;outline:none}
+.edit-field input:focus{border-color:var(--blue-light)}
+.color-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.color-group{display:flex;flex-direction:column;gap:4px}
+.color-group label{font-size:11px;color:var(--text2)}
+.color-input-wrap{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:5px;padding:4px 8px}
+.color-input-wrap input[type=color]{width:22px;height:22px;border:none;background:none;cursor:pointer;border-radius:3px;padding:0}
+.color-input-wrap input[type=text]{flex:1;background:none;border:none;color:var(--text);font-size:11px;font-family:'IBM Plex Mono',monospace;outline:none}
+.preset-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;background:var(--orange-dim);color:var(--orange);border:1px solid rgba(227,179,65,0.3)}
+.preset-badge.found{background:var(--green-dim);color:var(--green);border-color:rgba(63,185,80,0.3)}
+
+/* section list */
+.section-list{display:flex;flex-direction:column;gap:3px}
+.sec-list-item{border-radius:6px;border:1px solid var(--border2);overflow:hidden;background:var(--bg3);transition:border-color 0.15s}
+.sec-list-item.active{border-color:rgba(37,99,235,0.35)}
+.sec-list-header{display:flex;align-items:center;gap:8px;padding:7px 10px;cursor:pointer}
+.sec-list-header:hover{background:rgba(255,255,255,0.02)}
+.sec-toggle-check{width:16px;height:16px;border-radius:3px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.sec-list-item.active .sec-toggle-check{background:var(--primary);border-color:var(--primary)}
+.sec-toggle-check svg{display:none}
+.sec-list-item.active .sec-toggle-check svg{display:block}
+.sec-list-num{font-size:10px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:var(--text3);width:16px;text-align:center;flex-shrink:0}
+.sec-list-item.active .sec-list-num{color:var(--blue-light)}
+.sec-list-title{flex:1;font-size:11px;color:var(--text2);line-height:1.3}
+.sec-list-item.active .sec-list-title{color:var(--text)}
+.sec-expand-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:3px;font-size:11px;transition:transform 0.2s}
+.sec-expand-btn.open{transform:rotate(180deg)}
+.sec-edit-form{padding:10px 12px 12px 36px;border-top:1px solid var(--border2);display:none}
+.sec-edit-form.open{display:block}
+
+/* inline table editor */
+.inline-table{width:100%;border-collapse:collapse;font-size:11px;margin:6px 0}
+.inline-table th{background:var(--bg4);padding:5px 7px;text-align:left;font-size:9px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--border)}
+.inline-table td{padding:3px;border-bottom:1px solid var(--border2)}
+.inline-table td input,.inline-table td select{width:100%;background:var(--bg3);border:1px solid transparent;border-radius:3px;padding:4px 5px;color:var(--text);font-size:10px;outline:none;font-family:inherit}
+.inline-table td input:focus,.inline-table td select:focus{border-color:var(--blue-light)}
+.inline-table tr:last-child td{border-bottom:none}
+.add-row-btn{width:100%;padding:5px;border:1px dashed var(--border);background:none;color:var(--text3);border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit;transition:all 0.15s;margin-top:4px}
+.add-row-btn:hover{border-color:var(--blue-light);color:var(--blue-light)}
+.del-row-btn{background:none;border:none;cursor:pointer;color:var(--text3);padding:2px;border-radius:2px;line-height:1}
+.del-row-btn:hover{color:var(--red)}
+.add-sec-btn{display:flex;align-items:center;gap:6px;width:100%;padding:8px 10px;margin-top:6px;background:transparent;border:1px dashed var(--border);border-radius:5px;color:var(--text3);cursor:pointer;font-size:11px;font-family:inherit;transition:all 0.15s}
+.add-sec-btn:hover{border-color:var(--blue-light);color:var(--blue-light)}
+
+/* Shareable link box */
+.share-link-box{
+  background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 12px;
+  margin-top:6px;
+}
+.share-link-box .sl-label{font-size:10px;color:var(--text3);margin-bottom:4px}
+.share-link-row{display:flex;gap:6px;align-items:center}
+.share-link-row input{flex:1;background:var(--bg4);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--blue-light);font-size:10px;font-family:'IBM Plex Mono',monospace;outline:none}
+.copy-btn{background:var(--blue-dim);border:1px solid rgba(59,130,246,0.3);color:var(--blue-light);border-radius:4px;padding:5px 10px;font-size:10px;cursor:pointer;white-space:nowrap;transition:all 0.15s}
+.copy-btn:hover{background:rgba(59,130,246,0.25)}
+
+/* panel footer */
+.panel-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;position:sticky;bottom:0;background:var(--bg2)}
+.pf-btn{flex:1;padding:8px 10px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;transition:all 0.15s}
+.pf-btn.reset{background:transparent;border-color:var(--border);color:var(--text2)}
+.pf-btn.reset:hover{border-color:var(--text2);color:var(--text)}
+.pf-btn.export{background:var(--bg3);border-color:var(--border);color:var(--text2)}
+.pf-btn.export:hover{color:var(--text)}
+.pf-btn.apply{background:var(--primary);border-color:var(--primary);color:white}
+.pf-btn.apply:hover{background:var(--blue-light)}
+
+/* ══════════════════════════════════════════
+   REPORT CONTENT STYLES
+══════════════════════════════════════════ */
+.report-header{display:flex;align-items:flex-start;gap:16px;margin-bottom:28px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.client-logo{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0}
+.report-header-info{flex:1}
+.report-header-info h1{font-size:20px;font-weight:700;color:var(--text);line-height:1.2}
+.report-header-info p{color:var(--text2);font-size:12px;margin-top:3px}
+.report-header-meta{text-align:right}
+.meta-label{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px}
+.meta-val{font-size:12px;font-weight:600;color:var(--text)}
+.toc{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px 20px;margin-bottom:20px}
+.toc-title{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:12px}
+.toc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 16px}
+.toc-item{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--text2);cursor:pointer;padding:3px 0;transition:color 0.15s}
+.toc-item:hover{color:var(--blue-light)}
+.toc-num{width:20px;height:20px;border-radius:4px;background:var(--bg4);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--text3);flex-shrink:0}
+.qa-section{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:14px;overflow:hidden}
+.qa-section-header{display:flex;align-items:center;gap:10px;padding:11px 16px;background:var(--bg3);border-bottom:1px solid var(--border)}
+.sec-num{width:24px;height:24px;border-radius:5px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.sec-title-txt{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.sec-badge-tag{padding:2px 9px;border-radius:10px;font-size:10px;font-weight:500}
+.qa-section-body{padding:16px}
+.score-block{display:flex;align-items:center;gap:32px;margin-bottom:16px}
+.score-ring{position:relative;width:100px;height:100px;flex-shrink:0}
+.score-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-inner .snum{font-size:26px;font-weight:700;line-height:1;font-family:'IBM Plex Mono',monospace}
+.score-inner .sdenom{font-size:11px;color:var(--text3)}
+.score-inner .slabel{font-size:9px;color:var(--text3);letter-spacing:0.5px;text-transform:uppercase}
+.score-stats{display:flex;gap:28px}
+.ss-item{text-align:center}
+.ss-num{font-size:26px;font-weight:700;line-height:1;font-family:'IBM Plex Mono',monospace}
+.ss-label{font-size:10px;color:var(--text3);margin-top:4px;text-transform:uppercase;letter-spacing:0.4px}
+.qa-table{width:100%;border-collapse:collapse;font-size:12px}
+.qa-table th{text-align:left;padding:6px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);background:var(--bg4);border-bottom:1px solid var(--border)}
+.qa-table td{padding:7px 10px;border-bottom:1px solid var(--border2);color:var(--text2);vertical-align:top}
+.qa-table tr:last-child td{border-bottom:none}
+.qa-table tr:hover td{background:rgba(255,255,255,0.015)}
+.qa-table td.bold{font-weight:500;color:var(--text)}
+.tag{display:inline-flex;align-items:center;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:500;white-space:nowrap}
+.tag-pass{background:var(--green-dim);color:var(--green);border:1px solid rgba(63,185,80,0.25)}
+.tag-fail{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,81,73,0.25)}
+.tag-warn{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(227,179,65,0.25)}
+.tag-info{background:var(--blue-dim);color:var(--blue-light);border:1px solid rgba(37,99,235,0.25)}
+.tag-skip{background:rgba(110,118,129,0.12);color:var(--text3);border:1px solid rgba(110,118,129,0.2)}
+.tag-crit{background:var(--red-dim);color:var(--red);border:1px solid rgba(248,81,73,0.25)}
+.tag-high{background:var(--orange-dim);color:var(--orange);border:1px solid rgba(227,179,65,0.25)}
+.tag-med{background:var(--blue-dim);color:var(--blue-light);border:1px solid rgba(37,99,235,0.25)}
+.tag-low{background:rgba(110,118,129,0.12);color:var(--text3);border:1px solid rgba(110,118,129,0.2)}
+.alert-bar{padding:9px 13px;border-radius:5px;font-size:11px;line-height:1.55;margin:8px 0}
+.alert-bar.info{background:var(--blue-dim);border:1px solid rgba(37,99,235,0.3);color:#93c5fd}
+.alert-bar.warn{background:var(--orange-dim);border:1px solid rgba(227,179,65,0.3);color:var(--orange)}
+.alert-bar.error{background:var(--red-dim);border:1px solid rgba(248,81,73,0.3);color:#fca5a5}
+.metrics-row{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.metric-card{flex:1;min-width:80px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:12px 14px;text-align:center}
+.metric-card .m-val{font-size:24px;font-weight:700;line-height:1;font-family:'IBM Plex Mono',monospace;color:var(--text)}
+.metric-card .m-label{font-size:10px;color:var(--text3);margin-top:5px;text-transform:uppercase;letter-spacing:0.4px}
+.metric-card .m-val.green{color:var(--green)}.metric-card .m-val.red{color:var(--red)}.metric-card .m-val.orange{color:var(--orange)}.metric-card .m-val.blue{color:var(--blue-light)}.metric-card .m-val.teal{color:var(--teal)}
+.bar-chart{display:flex;flex-direction:column;gap:6px;margin:8px 0}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-size:11px;color:var(--text2);width:140px;flex-shrink:0}
+.bar-track{flex:1;height:9px;background:var(--bg4);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width 0.6s ease}
+.bar-fill.green{background:var(--green)}.bar-fill.orange{background:var(--orange)}.bar-fill.red{background:var(--red)}.bar-fill.blue{background:var(--blue-light)}.bar-fill.teal{background:var(--teal)}
+.bar-val{font-size:11px;font-family:'IBM Plex Mono',monospace;color:var(--text3);width:36px;text-align:right}
+.sub-head{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;padding-bottom:6px;margin:14px 0 8px;border-bottom:1px solid var(--border2)}
+.sub-head:first-child{margin-top:0}
+.uptime-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.uptime-card{background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px;text-align:center}
+.uptime-card .u-val{font-size:15px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--green)}
+.uptime-card .u-label{font-size:10px;color:var(--text3);margin-top:3px}
+.sec-description{font-size:12px;color:var(--text2);line-height:1.65;margin-bottom:14px}
+.sec-description strong{color:var(--text)}
+.report-footer{text-align:center;padding:22px 0 32px;color:var(--text3);font-size:11px;border-top:1px solid var(--border2);margin-top:8px;line-height:1.8}
+.report-footer .footer-dots{letter-spacing:2px;color:var(--border);margin:0 4px}
+
+/* ══ Modal ══ */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-backdrop.open{display:flex}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:10px;width:480px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:14px;font-weight:600}
+.modal-close{background:none;border:none;color:var(--text2);cursor:pointer;font-size:18px;padding:2px 6px;border-radius:4px}
+.modal-close:hover{color:var(--text);background:var(--bg4)}
+.modal-body{padding:18px;overflow-y:auto;flex:1}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.em-btn{padding:7px 18px;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent}
+.em-btn.cancel{background:transparent;border-color:var(--border);color:var(--text2)}
+.em-btn.cancel:hover{color:var(--text)}
+.em-btn.save{background:var(--primary);color:white;border-color:var(--primary)}
+.em-btn.save:hover{background:var(--blue-light)}
+.sec-type-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.sec-type-card{background:var(--bg3);border:2px solid var(--border);border-radius:6px;padding:12px;cursor:pointer;transition:all 0.15s}
+.sec-type-card:hover{border-color:var(--blue-light)}
+.sec-type-card.selected{border-color:var(--primary);background:var(--blue-dim)}
+.sec-type-card .stc-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
+.sec-type-card .stc-desc{font-size:10px;color:var(--text3)}
+
+/* ══ Toast ══ */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 18px;font-size:12px;color:var(--text);z-index:9999;transition:transform 0.3s ease;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:rgba(63,185,80,0.5);color:var(--green)}
+
+/* ══ 404 ══ */
+.notfound{min-height:100vh;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center}
+.notfound h2{font-size:20px;font-weight:700}
+.notfound p{color:var(--text2);font-size:13px}
+
+@media print{
+  .topnav,.side-panel,.toast{display:none!important}
+  .report-area{margin-right:0!important;padding:20px!important}
+  .report-page{padding-top:0!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+  PAGE: HOME (portal)
+═══════════════════════════════════════ -->
+<div class="page" id="page-home">
+  <div class="portal">
+    <div class="portal-hero">
+      <div class="hero-icon">📋</div>
+      <h1>QA Reports Portal</h1>
+      <p>Monthly quality assurance &amp; site health reports for all clients</p>
+    </div>
+    <div class="portal-grid" id="portal-grid"></div>
+    <button class="portal-admin-btn" onclick="navigate('/admin')">🔐 QA Admin Panel</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+  PAGE: ADMIN LOGIN
+═══════════════════════════════════════ -->
+<div class="page" id="page-admin-login">
+  <div class="admin-login-wrap">
+    <div style="width:380px">
+      <div class="back-link" onclick="navigate('/')">← Back to portal</div>
+      <div class="login-card">
+        <div class="login-card-top">
+          <div class="lct-icon">🛠</div>
+          <h2>QA Admin Panel</h2>
+          <p>Restricted to QA team members only</p>
+        </div>
+        <div class="login-card-body">
+          <div class="login-field">
+            <label>QA Email</label>
+            <input type="email" id="qa-email" placeholder="qa@agency.com" onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+          <div class="login-field">
+            <label>Password</label>
+            <input type="password" id="qa-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+          </div>
+          <div class="login-error" id="login-error">Incorrect credentials. Please try again.</div>
+          <button class="login-btn" onclick="doLogin()">Sign In →</button>
+          <div class="login-hint">Demo: qa@agency.com / qa2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+  PAGE: REPORT VIEW (client-facing)
+═══════════════════════════════════════ -->
+<div class="page" id="page-report">
+  <nav class="topnav" id="report-topnav">
+    <div class="topnav-logo" onclick="navigate('/')">
+      <div class="icon" id="nav-logo-icon">QA</div>
+      <span id="nav-title">QA Report</span>
+    </div>
+    <div class="topnav-sep"></div>
+    <!-- QA-only controls -->
+    <div id="qa-controls" style="display:none;align-items:center;gap:8px">
+      <div class="qa-badge"><span class="dot"></span> QA Admin</div>
+      <button class="topnav-btn ghost" onclick="togglePanel()" id="panel-btn">⚙ Admin Panel</button>
+      <button class="topnav-btn teal" onclick="exportJSON()">↓ Export JSON</button>
+    </div>
+    <button class="topnav-btn primary" onclick="window.print()">⎙ Print / PDF</button>
+    <button class="topnav-btn ghost" onclick="navigate('/')">← Portal</button>
+  </nav>
+
+  <div class="report-page">
+    <main class="report-area" id="report-area">
+      <div class="report-header">
+        <div class="client-logo" id="rpt-logo">SF</div>
+        <div class="report-header-info">
+          <h1 id="rpt-title">Schoolfix — QA Report</h1>
+          <p id="rpt-subtitle">Monthly Quality Assurance &amp; Site Health Report</p>
+        </div>
+        <div class="report-header-meta">
+          <div class="meta-label">REPORT PERIOD</div>
+          <div class="meta-val" id="rpt-period">March 2026</div>
+          <div class="meta-label" style="margin-top:8px">PREPARED BY</div>
+          <div class="meta-val" id="rpt-prepby">IWD Agency</div>
+        </div>
+      </div>
+      <div class="toc" id="toc-block"></div>
+      <div id="sections-container"></div>
+      <div class="report-footer">
+        QA Report generated by <span id="footer-prepby">IWD Agency</span>
+        <span class="footer-dots">·</span>
+        <span id="footer-client">Schoolfix Ltd.</span>
+        <span class="footer-dots">·</span>
+        <span id="footer-period">March 2026</span>
+        <span class="footer-dots">·</span>
+        Confidential
+      </div>
+    </main>
+
+    <!-- Admin Panel (QA only) -->
+    <aside class="side-panel hidden" id="side-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Admin Panel</h2>
+          <div class="panel-header-sub">QA access only · <span id="panel-report-label" style="color:var(--blue-light)"></span></div>
+        </div>
+        <button style="background:none;border:none;color:var(--text2);cursor:pointer;font-size:16px;padding:4px" onclick="togglePanel()">✕</button>
+      </div>
+      <div class="panel-tabs">
+        <div class="panel-tab active" onclick="switchTab('config',this)">Config</div>
+        <div class="panel-tab" onclick="switchTab('sections',this)">Sections</div>
+        <div class="panel-tab" onclick="switchTab('summary',this)">Summary</div>
+        <div class="panel-tab" onclick="switchTab('share',this)">Share</div>
+      </div>
+
+      <!-- CONFIG -->
+      <div class="tab-body active" id="tab-config">
+        <div class="panel-section">
+          <div class="panel-label">Client Preset</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select class="p-select" id="preset-select" onchange="loadPreset(this.value)" style="flex:1">
+              <option value="">— Select preset —</option>
+              <option value="schoolfix">Schoolfix</option>
+              <option value="acme">Acme Corp</option>
+              <option value="techstart">TechStart</option>
+            </select>
+            <span class="preset-badge" id="preset-status">New</span>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="panel-label">Client Info</div>
+          <div class="edit-field"><label>Client Name</label><input type="text" class="p-input" id="cfg-client" value="Schoolfix" oninput="liveUpdate()"></div>
+          <div class="input-row">
+            <div class="input-group"><label>Logo Initials</label><input type="text" class="p-input" id="cfg-initials" value="SF" maxlength="3" oninput="liveUpdate()"></div>
+            <div class="input-group"><label>Prepared By</label><input type="text" class="p-input" id="cfg-prepby" value="IWD Agency" oninput="liveUpdate()"></div>
+          </div>
+          <div class="edit-field" style="margin-top:8px"><label>Logo Image URL (optional)</label><input type="text" class="p-input" id="cfg-logo-url" placeholder="https://example.com/logo.png" oninput="liveUpdate()"></div>
+        </div>
+        <div class="panel-section">
+          <div class="panel-label">Report Period</div>
+          <div class="input-row">
+            <div class="input-group"><label>Month</label>
+              <select class="p-select" id="cfg-month" onchange="liveUpdate()">
+                <option>January</option><option>February</option><option selected>March</option>
+                <option>April</option><option>May</option><option>June</option>
+                <option>July</option><option>August</option><option>September</option>
+                <option>October</option><option>November</option><option>December</option>
+              </select>
+            </div>
+            <div class="input-group"><label>Year</label><input type="text" class="p-input" id="cfg-year" value="2026" oninput="liveUpdate()"></div>
+          </div>
+          <div class="edit-field" style="margin-top:8px"><label>Report Version</label><input type="text" class="p-input" id="cfg-version" value="1.0" oninput="liveUpdate()"></div>
+        </div>
+        <div class="panel-section">
+          <div class="panel-label">Branding Colors</div>
+          <div class="color-row">
+            <div class="color-group"><label>Primary</label><div class="color-input-wrap"><input type="color" id="cfg-primary-picker" value="#2563eb" oninput="syncColor('primary')"><input type="text" id="cfg-primary" value="#2563eb" oninput="syncColor('primary-text')"></div></div>
+            <div class="color-group"><label>Accent</label><div class="color-input-wrap"><input type="color" id="cfg-accent-picker" value="#06b6d4" oninput="syncColor('accent')"><input type="text" id="cfg-accent" value="#06b6d4" oninput="syncColor('accent-text')"></div></div>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="panel-label">Health Score</div>
+          <div class="input-row">
+            <div class="input-group"><label>Score (0-100)</label><input type="number" class="p-input" id="cfg-score" value="90" min="0" max="100" oninput="liveUpdate()"></div>
+            <div class="input-group"><label>Total Checks</label><input type="number" class="p-input" id="cfg-total" value="16" oninput="liveUpdate()"></div>
+          </div>
+          <div class="input-row" style="margin-top:8px">
+            <div class="input-group"><label>Tests Passed</label><input type="number" class="p-input" id="cfg-passed" value="12" oninput="liveUpdate()"></div>
+            <div class="input-group"><label>Warnings</label><input type="number" class="p-input" id="cfg-warnings" value="3" oninput="liveUpdate()"></div>
+          </div>
+          <div class="edit-field" style="margin-top:8px"><label>Issues Found</label><input type="number" class="p-input" id="cfg-issues" value="1" oninput="liveUpdate()"></div>
+        </div>
+      </div>
+
+      <!-- SECTIONS -->
+      <div class="tab-body" id="tab-sections">
+        <div class="panel-label" style="margin-bottom:8px">Toggle, Edit &amp; Reorder Sections</div>
+        <div class="section-list" id="section-list"></div>
+        <button class="add-sec-btn" onclick="openAddSecModal()"><span style="font-size:15px;line-height:1">+</span> Add New Section</button>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="tab-body" id="tab-summary">
+        <div class="panel-label" style="margin-bottom:6px">Executive Summary Text</div>
+        <div class="edit-field"><textarea class="p-input" id="cfg-summary" rows="6" oninput="liveUpdate()" style="min-height:120px;resize:vertical">This report covers the monthly quality assurance audit for <strong>Schoolfix</strong> for the period of <strong>March 2026</strong>. Overall site health remains strong with a score of <strong>90/100</strong>.
+
+Key highlights include excellent uptime and performance metrics, minor accessibility improvements recommended, and continued compliance with security best practices. One medium-priority issue was identified related to third-party script loading performance.</textarea></div>
+        <div class="panel-label" style="margin-bottom:6px;margin-top:14px">Internal QA Notes</div>
+        <div class="edit-field"><textarea class="p-input" id="cfg-notes" rows="3" placeholder="Internal notes (not shown in report)..." style="min-height:70px;resize:vertical"></textarea></div>
+      </div>
+
+      <!-- SHARE -->
+      <div class="tab-body" id="tab-share">
+        <div class="panel-label" style="margin-bottom:10px">Shareable Client Link</div>
+        <p style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6">Generate a direct link to this report. Clients can open it without any login or admin panel.</p>
+        <div class="edit-field"><label>Client ID (URL-safe)</label><input type="text" class="p-input" id="share-client-id" placeholder="e.g. schoolfix" oninput="updateShareLink()"></div>
+        <div class="edit-field"><label>Report Period (URL-safe)</label><input type="text" class="p-input" id="share-period" placeholder="e.g. march-2026" oninput="updateShareLink()"></div>
+        <div class="share-link-box">
+          <div class="sl-label">Shareable link</div>
+          <div class="share-link-row">
+            <input type="text" id="share-link-input" readonly>
+            <button class="copy-btn" onclick="copyShareLink()">Copy</button>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <div class="panel-label" style="margin-bottom:6px">Saved Reports</div>
+          <div id="saved-reports-list" style="display:flex;flex-direction:column;gap:4px"></div>
+          <button class="add-sec-btn" style="margin-top:6px" onclick="saveCurrentReport()">💾 Save Current Report</button>
+        </div>
+      </div>
+
+      <div class="panel-footer">
+        <button class="pf-btn reset" onclick="resetConfig()">Reset</button>
+        <button class="pf-btn export" onclick="exportJSON()">Export JSON</button>
+        <button class="pf-btn apply" onclick="applyChanges()">Apply</button>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<!-- PAGE: NOT FOUND -->
+<div class="page" id="page-404">
+  <div class="notfound">
+    <div style="font-size:48px">🔍</div>
+    <h2>Report Not Found</h2>
+    <p>The report you're looking for doesn't exist or hasn't been published yet.</p>
+    <button class="topnav-btn primary" style="margin-top:8px" onclick="navigate('/')">← Back to Portal</button>
+  </div>
+</div>
+
+<!-- ADD SECTION MODAL -->
+<div class="modal-backdrop" id="add-sec-modal" onclick="closeAddSecModal(event)">
+  <div class="modal-box">
+    <div class="modal-header"><h3>Add New Section</h3><button class="modal-close" onclick="closeAddSecModal()">✕</button></div>
+    <div class="modal-body">
+      <div class="edit-field"><label>Section Title</label><input type="text" class="p-input" id="new-sec-title" placeholder="e.g. Custom Audit"></div>
+      <div class="edit-field"><label>Section Type</label>
+        <div class="sec-type-grid">
+          <div class="sec-type-card selected" data-type="table" onclick="selSecType(this)"><div class="stc-title">📋 Table</div><div class="stc-desc">Rows with status tags</div></div>
+          <div class="sec-type-card" data-type="metrics" onclick="selSecType(this)"><div class="stc-title">📊 Metrics</div><div class="stc-desc">Big number stat cards</div></div>
+          <div class="sec-type-card" data-type="text" onclick="selSecType(this)"><div class="stc-title">📝 Text</div><div class="stc-desc">Description block</div></div>
+          <div class="sec-type-card" data-type="bars" onclick="selSecType(this)"><div class="stc-title">📈 Bar Chart</div><div class="stc-desc">Horizontal bars</div></div>
+        </div>
+      </div>
+      <div class="edit-field"><label>Badge</label>
+        <select class="p-input" id="new-sec-badge"><option value="pass">Pass (Green)</option><option value="warn">Warning (Orange)</option><option value="fail">Issue (Red)</option><option value="info">Info (Blue)</option></select>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="em-btn cancel" onclick="closeAddSecModal()">Cancel</button><button class="em-btn save" onclick="confirmAddSection()">Add Section</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  ROUTING
+// ═══════════════════════════════════════════════════════
+let isQA = false; // set true after login
+
+function navigate(path) {
+  location.hash = path;
+}
+
+function router() {
+  const hash = location.hash.replace('#','') || '/';
+  const parts = hash.split('/').filter(Boolean); // e.g. ['report','schoolfix','march-2026']
+
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+
+  if (hash === '/' || hash === '') {
+    renderPortal();
+    show('page-home');
+    document.title = 'QA Reports Portal';
+
+  } else if (parts[0] === 'admin') {
+    if (isQA) {
+      // Already logged in — go straight to last viewed report or portal
+      navigate('/');
+    } else {
+      show('page-admin-login');
+      document.title = 'QA Admin Login';
+    }
+
+  } else if (parts[0] === 'report' && parts[1] && parts[2]) {
+    const clientId = parts[1];
+    const period   = parts[2];
+    loadReport(clientId, period);
+
+  } else {
+    show('page-404');
+    document.title = '404 — Report Not Found';
+  }
+}
+
+function show(pageId) {
+  document.getElementById(pageId).classList.add('active');
+}
+
+window.addEventListener('hashchange', router);
+window.addEventListener('DOMContentLoaded', router);
+
+// ═══════════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════════
+const QA_CREDS = { email:'qa@agency.com', password:'qa2026' };
+
+function doLogin() {
+  const email = document.getElementById('qa-email').value.trim();
+  const pass  = document.getElementById('qa-pass').value;
+  const err   = document.getElementById('login-error');
+  if (email === QA_CREDS.email && pass === QA_CREDS.password) {
+    err.classList.remove('show');
+    isQA = true;
+    // Navigate to report page with admin panel, or portal
+    const last = sessionStorage.getItem('qa-last-report');
+    navigate(last || '/');
+    showToast('Welcome back, QA ✓', 'success');
+  } else {
+    err.classList.add('show');
+    document.getElementById('qa-pass').value = '';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  PORTAL
+// ═══════════════════════════════════════════════════════
+function renderPortal() {
+  const grid = document.getElementById('portal-grid');
+  const savedReports = getSavedReports();
+
+  // Group by clientId
+  const byClient = {};
+  Object.entries(savedReports).forEach(([key, report]) => {
+    const [clientId] = key.split('::');
+    if (!byClient[clientId]) byClient[clientId] = [];
+    byClient[clientId].push({ key, report });
+  });
+
+  // If no saved reports yet, show default Schoolfix demo
+  if (Object.keys(byClient).length === 0) {
+    grid.innerHTML = `
+      <div class="portal-client-card" onclick="navigate('/report/schoolfix/march-2026')">
+        <div class="pcc-head">
+          <div class="pcc-logo" style="background:#2563eb">SF</div>
+          <div><div class="pcc-name">Schoolfix</div><div class="pcc-sub">1 report available</div></div>
+        </div>
+        <div class="pcc-reports">
+          <div class="pcc-report-link" onclick="navigate('/report/schoolfix/march-2026')">
+            <span class="rl-month">March 2026</span>
+            <span class="rl-score" style="color:var(--green)">90/100</span>
+          </div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = Object.entries(byClient).map(([clientId, items]) => {
+    const first = items[0].report;
+    const color = first.config?.primary || '#2563eb';
+    const initials = first.config?.initials || clientId.substring(0,2).toUpperCase();
+    const clientName = first.config?.client || clientId;
+    const links = items.map(({key, report}) => {
+      const period = key.split('::')[1];
+      const score = report.config?.score || '—';
+      const sc = parseInt(score);
+      const scoreColor = sc >= 80 ? 'var(--green)' : sc >= 60 ? 'var(--orange)' : 'var(--red)';
+      return `<div class="pcc-report-link" onclick="event.stopPropagation();navigate('/report/${clientId}/${period}')">
+        <span class="rl-month">${report.config?.month||''} ${report.config?.year||''}</span>
+        <span class="rl-score" style="color:${scoreColor}">${score}/100</span>
+      </div>`;
+    }).join('');
+    return `<div class="portal-client-card">
+      <div class="pcc-head">
+        <div class="pcc-logo" style="background:${color}">${initials}</div>
+        <div><div class="pcc-name">${clientName}</div><div class="pcc-sub">${items.length} report${items.length>1?'s':''} available</div></div>
+      </div>
+      <div class="pcc-reports">${links}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+//  REPORT STORAGE
+// ═══════════════════════════════════════════════════════
+function getSavedReports() {
+  try { return JSON.parse(localStorage.getItem('qa-reports') || '{}'); } catch(e) { return {}; }
+}
+
+function saveReport(clientId, period, data) {
+  const reports = getSavedReports();
+  reports[`${clientId}::${period}`] = data;
+  localStorage.setItem('qa-reports', JSON.stringify(reports));
+}
+
+function getReport(clientId, period) {
+  const reports = getSavedReports();
+  return reports[`${clientId}::${period}`] || null;
+}
+
+// ═══════════════════════════════════════════════════════
+//  LOAD REPORT
+// ═══════════════════════════════════════════════════════
+let currentClientId = '';
+let currentPeriod   = '';
+
+function loadReport(clientId, period) {
+  currentClientId = clientId;
+  currentPeriod   = period;
+
+  sessionStorage.setItem('qa-last-report', `/report/${clientId}/${period}`);
+
+  const saved = getReport(clientId, period);
+  if (saved) {
+    config   = saved.config;
+    sections = saved.sections;
+  } else {
+    // Default state — demo report
+    resetToDefault(clientId, period);
+  }
+
+  show('page-report');
+  document.title = `${config.client} — QA Report — ${config.month} ${config.year}`;
+
+  // QA controls
+  const qaControls = document.getElementById('qa-controls');
+  if (isQA) {
+    qaControls.style.display = 'flex';
+    document.getElementById('panel-report-label').textContent = `${clientId} / ${period}`;
+    updateShareLink();
+    renderSavedReportsList();
+    // Pre-fill share inputs
+    document.getElementById('share-client-id').value = clientId;
+    document.getElementById('share-period').value = period;
+  } else {
+    qaControls.style.display = 'none';
+    // Hide panel if not QA
+    document.getElementById('side-panel').classList.add('hidden');
+    document.getElementById('report-area').classList.remove('with-panel');
+    panelOpen = false;
+  }
+
+  renderAll();
+  buildSectionList();
+  applyColors();
+}
+
+function resetToDefault(clientId, period) {
+  // Parse clientId/period into config
+  const name = clientId.charAt(0).toUpperCase() + clientId.slice(1).replace(/-/g,' ');
+  const parts = period.split('-');
+  const month = parts[0] ? parts[0].charAt(0).toUpperCase() + parts[0].slice(1) : 'March';
+  const year  = parts[1] || '2026';
+
+  config = {
+    client: name, initials: name.substring(0,2).toUpperCase(),
+    prepby: 'IWD Agency', logoUrl: '',
+    month, year, version: '1.0',
+    primary: '#2563eb', accent: '#06b6d4',
+    score: 90, passed: 12, warnings: 3, issues: 1, total: 16,
+    summary: `This report covers the monthly quality assurance audit for <strong>${name}</strong> for the period of <strong>${month} ${year}</strong>. Overall site health remains strong with a score of <strong>90/100</strong>.\n\nKey highlights include excellent uptime and performance metrics, minor accessibility improvements recommended, and continued compliance with security best practices.`
+  };
+  sections = getDefaultSections();
+}
+
+// ═══════════════════════════════════════════════════════
+//  DEFAULT SECTIONS
+// ═══════════════════════════════════════════════════════
+function getDefaultSections() {
+  return [
+    { id:'s1', active:true, type:'score', title:'Executive Summary & Health Score', badge:'pass', badgeText:'Passing' },
+    {
+      id:'s2', active:true, type:'table', title:'Audit Scope', badge:'info', badgeText:'Informational',
+      description:'Audit scope covers all key pages, user flows, and technical components of the platform.',
+      columns:['Area','Coverage','Method','Status'],
+      rows:[
+        ['Homepage & Landing Pages','Full','Manual + Automated','pass|Pass'],
+        ['Course Listing & Detail Pages','Full','Manual + Automated','pass|Pass'],
+        ['User Authentication','Full','Manual','pass|Pass'],
+        ['Checkout & Payment Flow','Full','Manual + Stripe Test','pass|Pass'],
+        ['Admin Panel','Partial','Manual spot-check','warn|Partial'],
+        ['Mobile Responsiveness','Full','BrowserStack','pass|Pass'],
+      ]
+    },
+    {
+      id:'s3', active:true, type:'table', title:'Functional Regression & Revenue Integrity', badge:'warn', badgeText:'1 Issue',
+      description:'All critical user flows tested for regression. Revenue-impacting paths verified end-to-end.',
+      columns:['Test Case','Expected','Actual','Status'],
+      rows:[
+        ['Course purchase (new user)','Order created, email sent','✓ Confirmed','pass|Pass'],
+        ['Coupon code at checkout','Discount applied','✓ Confirmed','pass|Pass'],
+        ['Partial refund — bundled course','Correct amount refunded','Incorrect amount shown','fail|Fail'],
+        ['Account creation + welcome email','Email within 60s','Delayed ~4 min','warn|Warn'],
+        ['Password reset flow','Email + link works','✓ Confirmed','pass|Pass'],
+      ]
+    },
+    {
+      id:'s4', active:true, type:'table', title:'ADA / WCAG 2.2 Compliance', badge:'warn', badgeText:'3 Issues',
+      description:'Tested to WCAG 2.2 AA standard using axe DevTools and manual keyboard/screen reader testing.',
+      columns:['Issue','WCAG Ref','Severity','Pages Affected'],
+      rows:[
+        ['Images missing alt text','1.1.1','fail|Critical','/courses, /course/xyz'],
+        ['Insufficient colour contrast on CTA buttons','1.4.3','warn|Serious','/checkout'],
+        ['Form inputs missing accessible labels','1.3.1','warn|Serious','/checkout'],
+        ['Focus indicator not visible on nav links','2.4.7','warn|Moderate','All pages'],
+      ]
+    },
+    {
+      id:'s5', active:true, type:'table', title:'Security & Application-Level Security', badge:'warn', badgeText:'1 Issue',
+      description:'Security headers tested via SecurityHeaders.com. Authentication controls verified manually.',
+      columns:['Check','Result','Value / Notes'],
+      rows:[
+        ['Strict-Transport-Security','pass|✓ Present','max-age=31536000; includeSubDomains'],
+        ['X-Frame-Options','pass|✓ Present','SAMEORIGIN'],
+        ['Content-Security-Policy','fail|✗ Missing','No CSP header — implement to mitigate XSS'],
+        ['Referrer-Policy','pass|✓ Present','strict-origin-when-cross-origin'],
+        ['2FA for admin accounts','pass|Enforced','Via Wordfence plugin'],
+        ['User enumeration','warn|Exposed','Author archive URLs reveal usernames'],
+      ]
+    },
+    {
+      id:'s6', active:true, type:'metrics_bars', title:'Performance & Core Web Vitals', badge:'pass', badgeText:'Good',
+      description:'Lighthouse tests run on desktop and mobile. Core Web Vitals from field data (GSC).',
+      metrics:[
+        {label:'LCP',val:'1.8s',color:'green'},{label:'FID',val:'14ms',color:'green'},
+        {label:'CLS',val:'0.04',color:'green'},{label:'TTFB',val:'620ms',color:'orange'},
+      ],
+      bars:[
+        {label:'Performance',val:92,color:'green'},{label:'Accessibility',val:88,color:'orange'},
+        {label:'Best Practices',val:95,color:'green'},{label:'SEO',val:96,color:'green'},
+      ],
+      table:{
+        columns:['Metric','Value','Threshold','Status'],
+        rows:[
+          ['LCP','1.8s','< 2.5s','pass|Good'],['FID','14ms','< 100ms','pass|Good'],
+          ['CLS','0.04','< 0.1','pass|Good'],['TTFB','620ms','< 600ms','warn|Needs Work'],
+          ['TTI','2.4s','< 3.8s','pass|Good'],
+        ]
+      }
+    },
+    {
+      id:'s7', active:true, type:'table', title:'Technical SEO & Crawl Health', badge:'pass', badgeText:'Good',
+      description:'Crawl performed with Screaming Frog. GSC data reviewed for coverage and indexation.',
+      columns:['Check','Result','Notes'],
+      rows:[
+        ['XML Sitemap','pass|Pass','Valid, submitted to GSC'],
+        ['Canonical tags','pass|Pass','Correctly implemented site-wide'],
+        ['Meta descriptions','warn|7 Missing','7 pages missing meta descriptions'],
+        ['Open Graph tags','warn|Incomplete','OG image missing on 12 blog posts'],
+        ['Core Web Vitals (GSC)','pass|Pass','All URLs in Good threshold'],
+        ['Broken internal links','warn|3 Found','On /resources page'],
+      ]
+    },
+    {
+      id:'s8', active:true, type:'uptime', title:'Infrastructure & Hosting Health', badge:'pass', badgeText:'Excellent',
+      description:'Server metrics and uptime monitored via UptimeRobot. Checked from 4 global regions.',
+      uptimeStats:[
+        {val:'99.98%',label:'Last 30 Days'},{val:'99.99%',label:'Last 7 Days'},
+        {val:'99.96%',label:'Last 90 Days'},{val:'0:02',label:'Downtime (hrs)'},
+      ],
+      table:{
+        columns:['Region','Avg (ms)','P95 (ms)','Status'],
+        rows:[
+          ['UK (London)','210','380','pass|Good'],
+          ['EU (Frankfurt)','290','450','pass|Good'],
+          ['US East (Virginia)','520','820','warn|Acceptable'],
+          ['Asia (Singapore)','890','1420','warn|Slow'],
+        ]
+      }
+    },
+    {
+      id:'s9', active:true, type:'actions', title:'Priority Action Matrix', badge:'warn', badgeText:'Action Required',
+      description:'Prioritised list of all actions arising from this QA cycle.',
+      columns:['Ref','Action','Priority','Owner','Sprint','Status'],
+      rows:[
+        ['A-01','Implement Content-Security-Policy header','crit|Critical','Dev Team','#13','fail|Open'],
+        ['A-02','Fix partial refund calc for bundled products','high|High','Dev Team','#13','fail|Open'],
+        ['A-03','Fix missing alt text on course images','high|High','Content Team','#13','fail|Open'],
+        ['A-04','Add Course schema markup','med|Medium','Dev / SEO','#13','info|Planned'],
+        ['A-05','Fix button contrast ratios on /checkout','med|Medium','Design / Dev','#13','info|Planned'],
+        ['A-06','Fix 3 broken links on /resources','low|Low','Content Team','#14','skip|Backlog'],
+      ]
+    },
+  ];
+}
+
+// ═══════════════════════════════════════════════════════
+//  SAVE / SHARE
+// ═══════════════════════════════════════════════════════
+function saveCurrentReport() {
+  const cid = document.getElementById('share-client-id').value.trim().toLowerCase().replace(/\s+/g,'-') || currentClientId;
+  const per = document.getElementById('share-period').value.trim().toLowerCase().replace(/\s+/g,'-') || currentPeriod;
+  if (!cid || !per) { showToast('Fill in Client ID and Period first'); return; }
+  saveReport(cid, per, { config: JSON.parse(JSON.stringify(config)), sections: JSON.parse(JSON.stringify(sections)) });
+  currentClientId = cid;
+  currentPeriod   = per;
+  location.hash   = `/report/${cid}/${per}`;
+  updateShareLink();
+  renderSavedReportsList();
+  showToast(`Report saved: ${cid} / ${per} ✓`, 'success');
+}
+
+function updateShareLink() {
+  const cid = document.getElementById('share-client-id')?.value || currentClientId;
+  const per = document.getElementById('share-period')?.value || currentPeriod;
+  const base = location.href.split('#')[0];
+  const link = `${base}#/report/${cid}/${per}`;
+  const el = document.getElementById('share-link-input');
+  if (el) el.value = link;
+}
+
+function copyShareLink() {
+  const el = document.getElementById('share-link-input');
+  if (!el) return;
+  navigator.clipboard.writeText(el.value).then(()=>showToast('Link copied ✓','success')).catch(()=>{
+    el.select(); document.execCommand('copy'); showToast('Link copied ✓','success');
+  });
+}
+
+function renderSavedReportsList() {
+  const saved = getSavedReports();
+  const el = document.getElementById('saved-reports-list');
+  if (!el) return;
+  const entries = Object.entries(saved);
+  if (entries.length === 0) {
+    el.innerHTML = `<div style="font-size:11px;color:var(--text3);padding:6px 0">No saved reports yet.</div>`;
+    return;
+  }
+  el.innerHTML = entries.map(([key, rep]) => {
+    const [cid, per] = key.split('::');
+    const isActive = cid===currentClientId && per===currentPeriod;
+    const score = rep.config?.score || '—';
+    return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:5px;background:var(--bg3);border:1px solid ${isActive?'rgba(37,99,235,0.4)':'var(--border2)'};cursor:pointer" onclick="navigate('/report/${cid}/${per}')">
+      <span style="flex:1;font-size:11px;color:var(--text)">${rep.config?.client||cid}</span>
+      <span style="font-size:10px;color:var(--text3)">${rep.config?.month||''} ${rep.config?.year||''}</span>
+      <span style="font-size:10px;font-family:monospace;color:var(--green)">${score}</span>
+      <button onclick="event.stopPropagation();deleteReport('${key}')" style="background:none;border:none;cursor:pointer;color:var(--text3);font-size:11px;padding:2px" title="Delete">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+function deleteReport(key) {
+  if (!confirm('Delete this saved report?')) return;
+  const reports = getSavedReports();
+  delete reports[key];
+  localStorage.setItem('qa-reports', JSON.stringify(reports));
+  renderSavedReportsList();
+  renderPortal();
+  showToast('Report deleted');
+}
+
+// ═══════════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════════
+let config   = {};
+let sections = [];
+
+// ═══════════════════════════════════════════════════════
+//  PANEL
+// ═══════════════════════════════════════════════════════
+let panelOpen = false;
+function togglePanel(forceOpen) {
+  if (!isQA) return;
+  panelOpen = typeof forceOpen === 'boolean' ? forceOpen : !panelOpen;
+  const panel = document.getElementById('side-panel');
+  const area  = document.getElementById('report-area');
+  const btn   = document.getElementById('panel-btn');
+  if (panelOpen) {
+    panel.classList.remove('hidden');
+    area.classList.add('with-panel');
+    if (btn) btn.textContent = '✕ Close Panel';
+  } else {
+    panel.classList.add('hidden');
+    area.classList.remove('with-panel');
+    if (btn) btn.textContent = '⚙ Admin Panel';
+  }
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.panel-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.tab-body').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════════
+function renderAll() {
+  updateHeader();
+  renderTOC();
+  renderSections();
+  applyColors();
+  if (isQA) updateShareLink();
+}
+
+function updateHeader() {
+  const c = config;
+  document.getElementById('rpt-title').textContent = `${c.client} — QA Report`;
+  document.getElementById('rpt-subtitle').textContent = `Monthly Quality Assurance & Site Health Report — v${c.version}`;
+  document.getElementById('rpt-period').textContent = `${c.month} ${c.year}`;
+  document.getElementById('rpt-prepby').textContent = c.prepby;
+  document.getElementById('nav-title').textContent  = `${c.client} — QA Report`;
+  document.getElementById('nav-logo-icon').textContent = c.initials || c.client.substring(0,2).toUpperCase();
+  const logo = document.getElementById('rpt-logo');
+  if (c.logoUrl) {
+    logo.innerHTML = `<img src="${c.logoUrl}" style="width:100%;height:100%;object-fit:contain;border-radius:10px">`;
+  } else {
+    logo.textContent = c.initials || c.client.substring(0,2).toUpperCase();
+    logo.style.background = c.primary||'#2563eb';
+  }
+  const fp=document.getElementById('footer-prepby'), fc=document.getElementById('footer-client'), fper=document.getElementById('footer-period');
+  if(fp) fp.textContent=c.prepby;
+  if(fc) fc.textContent=`${c.client} Ltd.`;
+  if(fper) fper.textContent=`${c.month} ${c.year}`;
+  // Sync config panel inputs
+  const map={
+    'cfg-client':c.client,'cfg-initials':c.initials,'cfg-prepby':c.prepby,
+    'cfg-logo-url':c.logoUrl,'cfg-year':c.year,'cfg-version':c.version,
+    'cfg-score':c.score,'cfg-passed':c.passed,'cfg-warnings':c.warnings,
+    'cfg-issues':c.issues,'cfg-total':c.total,'cfg-summary':c.summary||''
+  };
+  Object.entries(map).forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.value=val});
+  const monthSel=document.getElementById('cfg-month');
+  if(monthSel){const opts=Array.from(monthSel.options);const match=opts.find(o=>o.text===c.month);if(match)monthSel.value=match.value}
+}
+
+function renderTOC() {
+  const active = sections.filter(s=>s.active);
+  document.getElementById('toc-block').innerHTML =
+    `<div class="toc-title">Report Contents</div><div class="toc-grid">${
+      active.map((s,i)=>`<div class="toc-item" onclick="scrollToSec('section-${s.id}')">
+        <div class="toc-num" style="background:${(config.primary||'#2563eb')}18;border-color:${(config.primary||'#2563eb')}30;color:${config.primary||'#2563eb'}">${i+1}</div>
+        <span>${s.title}</span>
+      </div>`).join('')
+    }</div>`;
+}
+
+function scrollToSec(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})}
+
+function renderSections() {
+  const active = sections.filter(s=>s.active);
+  document.getElementById('sections-container').innerHTML = active.map((s,i)=>renderSection(s,i+1)).join('');
+}
+
+function renderSection(s,num) {
+  const bc={pass:'tag-pass',warn:'tag-warn',fail:'tag-fail',info:'tag-info'}[s.badge]||'tag-info';
+  let body='';
+  if(s.type==='score') body=renderScore(s);
+  else if(s.type==='table') body=renderTable(s);
+  else if(s.type==='metrics_bars') body=renderMetricsBars(s);
+  else if(s.type==='uptime') body=renderUptime(s);
+  else if(s.type==='actions') body=renderActions(s);
+  else if(s.type==='metrics') body=renderMetrics(s);
+  else if(s.type==='text') body=`${s.description?`<div class="sec-description">${s.description}</div>`:''}${s.content?`<div class="sec-description">${s.content}</div>`:''}`;
+  else if(s.type==='bars') body=`${s.description?`<div class="sec-description">${s.description}</div>`:''}${s.bars?`<div class="bar-chart">${s.bars.map(b=>`<div class="bar-row"><span class="bar-label">${b.label}</span><div class="bar-track"><div class="bar-fill ${b.color||'green'}" style="width:${b.val}%"></div></div><span class="bar-val">${b.val}</span></div>`).join('')}</div>`:''}`;
+  return `<div class="qa-section" id="section-${s.id}">
+    <div class="qa-section-header">
+      <div class="sec-num" style="background:${config.primary||'#2563eb'}">${num}</div>
+      <div class="sec-title-txt">${s.title}</div>
+      <span class="sec-badge-tag tag ${bc}">${s.badgeText||''}</span>
+    </div>
+    <div class="qa-section-body">${body}</div>
+  </div>`;
+}
+
+function mkTable(cols,rows){
+  if(!cols||!rows) return '';
+  return `<div style="overflow-x:auto"><table class="qa-table">
+    <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(row=>`<tr>${row.map((cell,ci)=>{
+      if(typeof cell==='string'&&cell.includes('|')){
+        const[cls,txt]=cell.split('|');
+        const tc={pass:'tag-pass',fail:'tag-fail',warn:'tag-warn',info:'tag-info',skip:'tag-skip',crit:'tag-fail',high:'tag-warn',med:'tag-info',low:'tag-low'}[cls]||'tag-info';
+        return `<td><span class="tag ${tc}">${txt}</span></td>`;
+      }
+      return `<td class="${ci===0?'bold':''}">${cell}</td>`;
+    }).join('')}</tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderScore(s){
+  const sc=config.score||90,circ=2*Math.PI*40,off=circ*(1-sc/100);
+  const col=sc>=80?'var(--green)':sc>=60?'var(--orange)':'var(--red)';
+  return `<div class="score-block">
+    <div class="score-ring">
+      <svg width="100" height="100" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg4)" stroke-width="8"/>
+        <circle cx="50" cy="50" r="40" fill="none" stroke="${col}" stroke-width="8"
+          stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+      </svg>
+      <div class="score-inner"><div class="snum" style="color:${col}">${sc}</div><div class="sdenom">/100</div><div class="slabel">Health Score</div></div>
+    </div>
+    <div class="score-stats">
+      <div class="ss-item"><div class="ss-num" style="color:var(--text)">${config.passed||0}</div><div class="ss-label">Tests Passed</div></div>
+      <div class="ss-item"><div class="ss-num" style="color:var(--orange)">${config.warnings||0}</div><div class="ss-label">Warnings</div></div>
+      <div class="ss-item"><div class="ss-num" style="color:var(--red)">${config.issues||0}</div><div class="ss-label">Issues Found</div></div>
+      <div class="ss-item"><div class="ss-num" style="color:var(--teal)">${config.total||0}</div><div class="ss-label">Total Checks</div></div>
+    </div>
+  </div>
+  <div class="sec-description">${(config.summary||'').replace(/\n/g,'<br>')}</div>`;
+}
+
+function renderTable(s){
+  let o='';
+  if(s.description) o+=`<div class="sec-description">${s.description}</div>`;
+  o+=mkTable(s.columns,s.rows);
+  if(s.warnNote) o+=`<div class="alert-bar warn" style="margin-top:10px">⚠ ${s.warnNote}</div>`;
+  return o;
+}
+
+function renderMetricsBars(s){
+  let o='';
+  if(s.description) o+=`<div class="sec-description">${s.description}</div>`;
+  if(s.metrics) o+=`<div class="metrics-row">${s.metrics.map(m=>`<div class="metric-card"><div class="m-val ${m.color||''}">${m.val}</div><div class="m-label">${m.label}</div></div>`).join('')}</div>`;
+  if(s.table) o+=`<div class="sub-head">Detailed Metrics</div>`+mkTable(s.table.columns,s.table.rows);
+  if(s.bars) o+=`<div class="sub-head">Lighthouse Scores</div><div class="bar-chart">${s.bars.map(b=>`<div class="bar-row"><span class="bar-label">${b.label}</span><div class="bar-track"><div class="bar-fill ${b.color||'green'}" style="width:${b.val}%"></div></div><span class="bar-val">${b.val}</span></div>`).join('')}</div>`;
+  return o;
+}
+
+function renderUptime(s){
+  let o='';
+  if(s.description) o+=`<div class="sec-description">${s.description}</div>`;
+  if(s.uptimeStats) o+=`<div class="uptime-grid">${s.uptimeStats.map(u=>`<div class="uptime-card"><div class="u-val">${u.val}</div><div class="u-label">${u.label}</div></div>`).join('')}</div>`;
+  if(s.table) o+=`<div class="sub-head">Response Time by Region</div>`+mkTable(s.table.columns,s.table.rows);
+  return o;
+}
+
+function renderActions(s){
+  let o='';
+  if(s.description) o+=`<div class="sec-description">${s.description}</div>`;
+  o+=mkTable(s.columns,s.rows);
+  const open=(s.rows||[]).filter(r=>r[5]&&r[5].includes('Open')).length;
+  if(open>0) o+=`<div class="alert-bar warn" style="margin-top:10px">📋 ${open} open action${open>1?'s':''} require attention before next release.</div>`;
+  return o;
+}
+
+function renderMetrics(s){
+  let o='';
+  if(s.description) o+=`<div class="sec-description">${s.description}</div>`;
+  if(s.metrics) o+=`<div class="metrics-row">${s.metrics.map(m=>`<div class="metric-card"><div class="m-val ${m.color||''}">${m.val}</div><div class="m-label">${m.label}</div></div>`).join('')}</div>`;
+  return o;
+}
+
+// ═══════════════════════════════════════════════════════
+//  SECTION LIST (admin panel)
+// ═══════════════════════════════════════════════════════
+function buildSectionList(){
+  if(!isQA) return;
+  const list=document.getElementById('section-list');
+  list.innerHTML=sections.map((s,i)=>{
+    const form=buildInlineEditForm(s);
+    return `<div class="sec-list-item ${s.active?'active':''}" id="sli-${s.id}">
+      <div class="sec-list-header" onclick="toggleSecActive('${s.id}',event)">
+        <div class="sec-toggle-check"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><path d="M2 6l3 3 5-5"/></svg></div>
+        <span class="sec-list-num">${i+1}</span>
+        <span class="sec-list-title">${s.title}</span>
+        <button class="sec-expand-btn" id="expbtn-${s.id}" onclick="toggleSecForm('${s.id}',event)" title="Edit">▾</button>
+      </div>
+      <div class="sec-edit-form" id="sef-${s.id}">${form}</div>
+    </div>`;
+  }).join('');
+}
+
+function toggleSecActive(id,e){
+  if(e.target.closest('.sec-expand-btn')) return;
+  const s=sections.find(x=>x.id===id);
+  if(s) s.active=!s.active;
+  buildSectionList(); renderAll();
+}
+
+function toggleSecForm(id,e){
+  e.stopPropagation();
+  const form=document.getElementById('sef-'+id);
+  const btn=document.getElementById('expbtn-'+id);
+  const open=form.classList.contains('open');
+  document.querySelectorAll('.sec-edit-form').forEach(f=>f.classList.remove('open'));
+  document.querySelectorAll('.sec-expand-btn').forEach(b=>b.classList.remove('open'));
+  if(!open){form.classList.add('open');btn.classList.add('open');}
+}
+
+function buildInlineEditForm(s){
+  const badgeOpts=['pass','warn','fail','info'].map(v=>
+    `<option value="${v}" ${s.badge===v?'selected':''}>${{pass:'Pass',warn:'Warning',fail:'Issue',info:'Info'}[v]}</option>`
+  ).join('');
+  let html=`
+  <div class="edit-field"><label>Section Title</label><input type="text" class="p-input" id="ef-title-${s.id}" value="${esc(s.title)}"></div>
+  <div class="input-row" style="margin-bottom:10px">
+    <div class="input-group"><label>Badge</label><select class="p-input" id="ef-badge-${s.id}" style="font-size:11px;padding:5px 8px">${badgeOpts}</select></div>
+    <div class="input-group"><label>Badge Text</label><input type="text" class="p-input" id="ef-badgetext-${s.id}" value="${esc(s.badgeText||'')}"></div>
+  </div>`;
+  if(s.type!=='score'&&s.description!==undefined)
+    html+=`<div class="edit-field"><label>Description</label><textarea class="p-input" id="ef-desc-${s.id}" rows="2" style="min-height:50px">${esc(s.description||'')}</textarea></div>`;
+  if(s.type==='score')
+    html+=`<div class="alert-bar info" style="font-size:10px;padding:6px 10px">Score values are set in the Config tab.</div>`;
+  if(s.columns&&s.rows) html+=buildInlineTable(s.id,'main',s.columns,s.rows);
+  if(s.metrics) html+=`<div class="edit-field" style="margin-top:6px"><label>Metrics — label|value|color per line</label><textarea class="p-input" id="ef-metrics-${s.id}" rows="3" style="font-size:10px;font-family:monospace">${s.metrics.map(m=>`${m.label}|${m.val}|${m.color||'green'}`).join('\n')}</textarea></div>`;
+  if(s.bars) html+=`<div class="edit-field" style="margin-top:6px"><label>Bars — label|value(0-100)|color per line</label><textarea class="p-input" id="ef-bars-${s.id}" rows="3" style="font-size:10px;font-family:monospace">${s.bars.map(b=>`${b.label}|${b.val}|${b.color||'green'}`).join('\n')}</textarea></div>`;
+  if(s.table) html+=`<div class="panel-label" style="margin:8px 0 4px;font-size:9px">Nested Table</div>`+buildInlineTable(s.id,'sub',s.table.columns,s.table.rows);
+  if(s.uptimeStats) html+=`<div class="edit-field" style="margin-top:6px"><label>Uptime Stats — value|label per line</label><textarea class="p-input" id="ef-uptime-${s.id}" rows="3" style="font-size:10px;font-family:monospace">${s.uptimeStats.map(u=>`${u.val}|${u.label}`).join('\n')}</textarea></div>`;
+  if(s.warnNote!==undefined) html+=`<div class="edit-field" style="margin-top:6px"><label>Warning Note</label><textarea class="p-input" id="ef-warnnote-${s.id}" rows="2" style="min-height:44px">${esc(s.warnNote||'')}</textarea></div>`;
+  if(s.content!==undefined) html+=`<div class="edit-field" style="margin-top:6px"><label>Content (HTML ok)</label><textarea class="p-input" id="ef-content-${s.id}" rows="3" style="min-height:60px">${esc(s.content||'')}</textarea></div>`;
+  html+=`<div style="display:flex;gap:6px;margin-top:10px">
+    <button class="pf-btn apply" onclick="saveSecInline('${s.id}')" style="flex:1;padding:6px 8px;font-size:11px">✓ Save Section</button>
+    <button class="pf-btn reset" onclick="deleteSec('${s.id}')" style="flex:0 0 auto;padding:6px 10px;font-size:11px;color:var(--red);border-color:rgba(248,81,73,0.3)">🗑</button>
+  </div>`;
+  return html;
+}
+
+function buildInlineTable(sid,slot,cols,rows){
+  const tid=`eit-${sid}-${slot}`;
+  return `<div class="edit-field"><label>${slot==='main'?'Table Data':'Nested Table'}</label>
+    <div style="overflow-x:auto"><table class="inline-table" id="${tid}">
+      <thead><tr>${cols.map(c=>`<th>${c}</th>`).join('')}<th style="width:22px"></th></tr></thead>
+      <tbody>${rows.map(row=>`<tr>${row.map(cell=>`<td><input type="text" value="${escA(cell)}"></td>`).join('')}<td><button class="del-row-btn" onclick="delRow(this)">✕</button></td></tr>`).join('')}</tbody>
+    </table></div>
+    <button class="add-row-btn" onclick="addRow('${tid}',${cols.length})">+ row</button>
+  </div>`;
+}
+
+function addRow(tid,count){
+  const tbody=document.querySelector('#'+tid+' tbody');
+  if(!tbody) return;
+  const tr=document.createElement('tr');
+  tr.innerHTML=Array(count).fill('').map(()=>`<td><input type="text" value=""></td>`).join('')+`<td><button class="del-row-btn" onclick="delRow(this)">✕</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function delRow(btn){btn.closest('tr').remove()}
+
+function readInlineTable(tid){
+  const tbody=document.querySelector('#'+tid+' tbody');
+  if(!tbody) return null;
+  return Array.from(tbody.querySelectorAll('tr')).map(tr=>Array.from(tr.querySelectorAll('input')).map(i=>i.value));
+}
+
+function saveSecInline(id){
+  const s=sections.find(x=>x.id===id);if(!s) return;
+  const g=i=>document.getElementById(i);
+  if(g(`ef-title-${id}`)) s.title=g(`ef-title-${id}`).value;
+  if(g(`ef-badge-${id}`)) s.badge=g(`ef-badge-${id}`).value;
+  if(g(`ef-badgetext-${id}`)) s.badgeText=g(`ef-badgetext-${id}`).value;
+  if(g(`ef-desc-${id}`)) s.description=g(`ef-desc-${id}`).value;
+  if(g(`ef-warnnote-${id}`)) s.warnNote=g(`ef-warnnote-${id}`).value;
+  if(g(`ef-content-${id}`)) s.content=g(`ef-content-${id}`).value;
+  const t1=readInlineTable(`eit-${id}-main`);if(t1&&s.columns) s.rows=t1;
+  const t2=readInlineTable(`eit-${id}-sub`);if(t2&&s.table) s.table.rows=t2;
+  const mel=g(`ef-metrics-${id}`);if(mel) s.metrics=mel.value.trim().split('\n').filter(Boolean).map(l=>{const[a,b,c]=l.split('|');return{label:a?.trim(),val:b?.trim(),color:c?.trim()||'green'}});
+  const bel=g(`ef-bars-${id}`);if(bel) s.bars=bel.value.trim().split('\n').filter(Boolean).map(l=>{const[a,b,c]=l.split('|');return{label:a?.trim(),val:parseInt(b)||0,color:c?.trim()||'green'}});
+  const uel=g(`ef-uptime-${id}`);if(uel) s.uptimeStats=uel.value.trim().split('\n').filter(Boolean).map(l=>{const[a,b]=l.split('|');return{val:a?.trim(),label:b?.trim()}});
+  renderAll(); buildSectionList();
+  setTimeout(()=>{const form=document.getElementById(`sef-${id}`);const btn=document.getElementById(`expbtn-${id}`);if(form){form.classList.add('open');btn?.classList.add('open')}},50);
+  showToast('Section saved ✓','success');
+}
+
+function deleteSec(id){
+  if(!confirm('Delete this section?')) return;
+  sections=sections.filter(s=>s.id!==id);
+  buildSectionList(); renderAll();
+  showToast('Section deleted');
+}
+
+// ═══════════════════════════════════════════════════════
+//  ADD SECTION
+// ═══════════════════════════════════════════════════════
+let newSecType='table';
+function openAddSecModal(){newSecType='table';document.querySelectorAll('.sec-type-card').forEach(c=>c.classList.remove('selected'));document.querySelector('[data-type="table"]')?.classList.add('selected');document.getElementById('new-sec-title').value='';document.getElementById('add-sec-modal').classList.add('open')}
+function selSecType(el){document.querySelectorAll('.sec-type-card').forEach(c=>c.classList.remove('selected'));el.classList.add('selected');newSecType=el.dataset.type}
+function closeAddSecModal(e){if(e&&e.target!==document.getElementById('add-sec-modal')) return;document.getElementById('add-sec-modal').classList.remove('open')}
+function confirmAddSection(){
+  const title=document.getElementById('new-sec-title').value.trim();
+  if(!title){showToast('Please enter a title');return}
+  const badge=document.getElementById('new-sec-badge').value;
+  const badgeText={pass:'Pass',warn:'Warning',fail:'Issue',info:'Info'}[badge];
+  const id='s'+Date.now();
+  const s={id,active:true,type:newSecType,title,badge,badgeText};
+  if(newSecType==='table'){s.description='Edit this description.';s.columns=['Item','Detail','Status'];s.rows=[['Example 1','Details here','pass|Pass'],['Example 2','Details here','warn|Review']]}
+  else if(newSecType==='metrics'){s.description='';s.metrics=[{label:'Metric 1',val:'0',color:'green'},{label:'Metric 2',val:'0',color:'blue'}]}
+  else if(newSecType==='text'){s.description='Add your content here.';s.content=''}
+  else if(newSecType==='bars'){s.description='';s.bars=[{label:'Item 1',val:80,color:'green'},{label:'Item 2',val:60,color:'orange'}]}
+  sections.push(s);
+  closeAddSecModal();renderAll();buildSectionList();
+  showToast(`"${title}" added ✓`,'success');
+  setTimeout(()=>{switchTab('sections',document.querySelector('[onclick*="sections"]'));const form=document.getElementById(`sef-${id}`);const btn=document.getElementById(`expbtn-${id}`);if(form){form.classList.add('open');btn?.classList.add('open')}},80);
+}
+
+// ═══════════════════════════════════════════════════════
+//  LIVE UPDATE
+// ═══════════════════════════════════════════════════════
+function liveUpdate(){
+  const g=i=>document.getElementById(i)?.value;
+  config.client=g('cfg-client')||config.client;
+  config.initials=g('cfg-initials')||config.initials;
+  config.prepby=g('cfg-prepby')||config.prepby;
+  config.logoUrl=g('cfg-logo-url')||'';
+  config.month=g('cfg-month')||config.month;
+  config.year=g('cfg-year')||config.year;
+  config.version=g('cfg-version')||config.version;
+  config.score=parseInt(g('cfg-score'))||90;
+  config.passed=parseInt(g('cfg-passed'))||0;
+  config.warnings=parseInt(g('cfg-warnings'))||0;
+  config.issues=parseInt(g('cfg-issues'))||0;
+  config.total=parseInt(g('cfg-total'))||0;
+  config.summary=document.getElementById('cfg-summary')?.value||config.summary;
+  renderAll();
+}
+
+function applyChanges(){liveUpdate();showToast('Changes applied ✓','success')}
+
+function resetConfig(){
+  document.getElementById('preset-select').value='';
+  document.getElementById('preset-status').textContent='New';
+  document.getElementById('preset-status').className='preset-badge';
+  showToast('Config reset');
+}
+
+// ═══════════════════════════════════════════════════════
+//  COLORS
+// ═══════════════════════════════════════════════════════
+function syncColor(which){
+  if(which==='primary'){const v=document.getElementById('cfg-primary-picker').value;document.getElementById('cfg-primary').value=v;config.primary=v}
+  else if(which==='primary-text'){const v=document.getElementById('cfg-primary').value;if(/^#[0-9a-fA-F]{6}$/.test(v)){document.getElementById('cfg-primary-picker').value=v;config.primary=v}}
+  else if(which==='accent'){const v=document.getElementById('cfg-accent-picker').value;document.getElementById('cfg-accent').value=v;config.accent=v}
+  else if(which==='accent-text'){const v=document.getElementById('cfg-accent').value;if(/^#[0-9a-fA-F]{6}$/.test(v)){document.getElementById('cfg-accent-picker').value=v;config.accent=v}}
+  applyColors();renderAll();
+}
+
+function applyColors(){
+  const p=config.primary||'#2563eb',a=config.accent||'#06b6d4';
+  document.documentElement.style.setProperty('--primary',p);
+  document.documentElement.style.setProperty('--blue-dim',h2r(p,0.15));
+  document.documentElement.style.setProperty('--teal',a);
+  document.documentElement.style.setProperty('--teal-dim',h2r(a,0.15));
+}
+
+function h2r(hex,a){
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+// ═══════════════════════════════════════════════════════
+//  PRESETS
+// ═══════════════════════════════════════════════════════
+const PRESETS={
+  schoolfix:{client:'Schoolfix',initials:'SF',prepby:'IWD Agency',primary:'#2563eb',accent:'#06b6d4',score:90,passed:12,warnings:3,issues:1,total:16},
+  acme:{client:'Acme Corp',initials:'AC',prepby:'QA Team',primary:'#16a34a',accent:'#f59e0b',score:85,passed:10,warnings:5,issues:2,total:17},
+  techstart:{client:'TechStart',initials:'TS',prepby:'Dev Agency',primary:'#7c3aed',accent:'#ec4899',score:78,passed:9,warnings:4,issues:3,total:16}
+};
+
+function loadPreset(key){
+  const badge=document.getElementById('preset-status');
+  if(!key){badge.textContent='New';badge.className='preset-badge';return}
+  const p=PRESETS[key];
+  if(!p){badge.textContent='Not found';badge.className='preset-badge';return}
+  badge.textContent='Loaded ✓';badge.className='preset-badge found';
+  Object.assign(config,p);
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.value=v};
+  set('cfg-client',p.client);set('cfg-initials',p.initials);set('cfg-prepby',p.prepby);
+  set('cfg-primary',p.primary);set('cfg-primary-picker',p.primary);
+  set('cfg-accent',p.accent);set('cfg-accent-picker',p.accent);
+  set('cfg-score',p.score);set('cfg-passed',p.passed);set('cfg-warnings',p.warnings);
+  set('cfg-issues',p.issues);set('cfg-total',p.total);
+  applyColors();renderAll();
+  showToast(`Preset "${p.client}" loaded ✓`,'success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  EXPORT
+// ═══════════════════════════════════════════════════════
+function exportJSON(){
+  const data={config,sections};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=`qa-${currentClientId||'report'}-${currentPeriod||'export'}.json`;
+  a.click();URL.revokeObjectURL(url);
+  showToast('JSON exported ✓','success');
+}
+
+// ═══════════════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════════════
+let toastT;
+function showToast(msg,type=''){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.className=`toast ${type}`;el.classList.add('show');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+// ═══════════════════════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════════════════════
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function escA(s){return String(s||'').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+</script>
+</body>
+</html>
